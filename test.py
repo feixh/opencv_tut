@@ -19,7 +19,13 @@ def overlay_image(foreground, background, rect):
     row, col = int(ratio*row) & 0xfffe, int(ratio*col) & 0xfffe
     resized = cv2.resize(foreground, dsize=(col, row))
     ret = background.copy()
-    ret[yc-row/2:yc+row/2, xc-col/2:xc+col/2, :] = resized.copy()
+    ymin = max(yc-row/2, 0)
+    ymax = min(yc+row/2, ret.shape[0])
+    xmin = max(xc-col/2, 0)
+    xmax = min(xc+col/2, ret.shape[1])
+    size_x, size_y = xmax-xmin, ymax-ymin
+    xo, yo = xmin-(xc-col/2), ymin-(yc-row/2)
+    ret[ymin:ymax, xmin:xmax, :] = resized[yo:size_y, xo:size_x, :]
     return ret
 
 
